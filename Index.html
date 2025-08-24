@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Networking Fundamentals Course</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #progress-container { width: 100%; background: #ddd; height: 25px; border-radius: 8px; margin-bottom: 20px; }
+    #progress-bar { height: 100%; width: 0%; background: green; color: white; text-align: center; border-radius: 8px; transition: width 0.4s; }
+    .lesson-box { padding: 15px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 20px; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    #course-status { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Networking Fundamentals</h1>
+
+  <div id="progress-container">
+    <div id="progress-bar">0%</div>
+  </div>
+
+  <h2 id="lesson-title"></h2>
+  <div id="lesson-content"></div>
+
+  <button id="prev-btn">⬅ Previous</button>
+  <button id="next-btn">Next ➡</button>
+  <button id="dashboard-btn">🏠 Dashboard</button>
+
+  <div id="course-status"></div>
+
+  <script>
+    // ================================
+    // Lessons
+    // ================================
+    const lessons = [
+      { title: "Introduction to Networking", content: "Basics of what networking is." },
+      { title: "Network Topologies", content: "Star, Mesh, Bus, Ring, Hybrid explained." },
+      { title: "OSI Model", content: "7 layers explained in detail." },
+      { title: "TCP/IP Model", content: "How it maps to OSI model." },
+      { title: "IP Addressing & Subnetting", content: "Understanding IPv4, IPv6, subnet masks." },
+      { title: "Firewalls & Security Basics", content: "Network protection fundamentals." },
+      { title: "Summary & Next Steps", content: "Final recap of networking fundamentals." }
+    ];
+
+    let currentLessonIndex = parseInt(localStorage.getItem("currentLessonIndex")) || 0;
+    const progressBar = document.getElementById("progress-bar");
+    const lessonTitle = document.getElementById("lesson-title");
+    const lessonContent = document.getElementById("lesson-content");
+    const nextBtn = document.getElementById("next-btn");
+    const prevBtn = document.getElementById("prev-btn");
+    const dashboardBtn = document.getElementById("dashboard-btn");
+    const courseStatus = document.getElementById("course-status");
+
+    function renderLesson() {
+      const lesson = lessons[currentLessonIndex];
+      lessonTitle.textContent = lesson.title;
+      lessonContent.innerHTML = `<div class="lesson-box">${lesson.content}</div>`;
+      localStorage.setItem("currentLessonIndex", currentLessonIndex);
+      updateProgress();
+      updateButtons();
+    }
+
+    function updateProgress() {
+      const total = lessons.length;
+      // Only count completed lessons, not current
+      const completed = currentLessonIndex;
+      const percent = Math.round((completed / total) * 100);
+      progressBar.style.width = percent + "%";
+      progressBar.textContent = percent + "%";
+
+      if (currentLessonIndex === total - 1) {
+        courseStatus.textContent = "✅ Course Completed!";
+        localStorage.setItem("courseCompleted", "true");
+      } else {
+        courseStatus.textContent = "";
+      }
+    }
+
+    function updateButtons() {
+      prevBtn.disabled = currentLessonIndex === 0;
+      nextBtn.disabled = currentLessonIndex === lessons.length - 1;
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (currentLessonIndex < lessons.length - 1) {
+        currentLessonIndex++;
+        renderLesson();
+      }
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (currentLessonIndex > 0) {
+        currentLessonIndex--;
+        renderLesson();
+      }
+    });
+
+    dashboardBtn.addEventListener("click", () => {
+      alert("Going back to dashboard... (replace with real dashboard page)");
+    });
+
+    renderLesson();
+  </script>
+</body>
+</html>
